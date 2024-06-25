@@ -5,5 +5,6 @@ import (
 )
 
 var con, _ = db.Connect()
-var dbClasses, _ = db.GetClassList(con)
-var dbRaces, _ = db.GetRaceList(con)
+var Classes, _ = ImportClasses()
+var Races, _ = ImportRaces()
+var Items, _ = ImportItems()

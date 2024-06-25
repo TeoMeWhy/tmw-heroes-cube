@@ -1,5 +1,6 @@
+DROP TABLE IF EXISTS inventories;
 CREATE TABLE IF NOT EXISTS inventories (
-    Id              VARCHAR(150),
-    ItemId          VARCHAR(50),
-    IdPerson        VARCHAR(150)
+    IdPerson        VARCHAR(150),
+    IdItem          VARCHAR(50),
+    Quantity        INTEGER
 );

@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS classes (
 );
 
 INSERT INTO classes VALUES
-    ('Mage', 'Inteligence', 'Agility', 'Strength'),
-    ('Cleric', 'Inteligence', 'Strength', 'Agility'),
-    ('Thief', 'Agility', 'Inteligence', 'Strength'),
-    ('Warrior', 'Strength', 'Agility', 'Inteligence'),
-    ('Bard', 'Agility', 'Strength', 'Inteligence');
+    ('mage', 'inteligence', 'agility', 'strength'),
+    ('cleric', 'inteligence', 'strength', 'agility'),
+    ('thief', 'agility', 'inteligence', 'strength'),
+    ('warrior', 'strength', 'agility', 'inteligence'),
+    ('bard', 'agility', 'strength', 'inteligence');

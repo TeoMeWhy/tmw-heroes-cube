@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS races(
 );
 
 INSERT INTO races VALUES
-    ('Human', 1,1, 1),
-    ('Elf', 0,2, 1),
-    ('Dwarf', 3,0, 0),
-    ('Hobbit', 0,3, 0),
-    ('Poney', 0,0, 0);
+    ('human', 1,1, 1),
+    ('elf', 0,2, 1),
+    ('dwarf', 3,0, 0),
+    ('hobbit', 0,3, 0),
+    ('poney', 0,0, 0);

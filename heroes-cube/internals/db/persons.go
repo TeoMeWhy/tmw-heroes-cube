@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"log"
 )
 
 type Person struct {
@@ -42,7 +41,7 @@ func CreatePerson(p *Person, con *sql.DB) error {
 		return err
 	}
 
-	res, err := state.Exec(
+	_, err = state.Exec(
 		p.Id,
 		p.Name,
 		p.Strength,
@@ -57,7 +56,6 @@ func CreatePerson(p *Person, con *sql.DB) error {
 		p.Level,
 	)
 
-	log.Println(res.RowsAffected())
 	return err
 
 }
@@ -135,7 +133,7 @@ func UpdatePerson(p *Person, con *sql.DB) error {
 		return err
 	}
 
-	res, err := state.Exec(
+	_, err = state.Exec(
 		p.Id,
 		p.Name,
 		p.Strength,
@@ -151,12 +149,11 @@ func UpdatePerson(p *Person, con *sql.DB) error {
 		p.Id,
 	)
 
-	log.Println(res.RowsAffected())
 	return err
 
 }
 
-func DeletePerson(p *Person, con *sql.DB) error {
+func DeletePerson(id string, con *sql.DB) error {
 	query := `
 	DELETE FROM persons
 	WHERE Id = ?
@@ -167,7 +164,7 @@ func DeletePerson(p *Person, con *sql.DB) error {
 		return err
 	}
 
-	_, err = state.Exec(p.Id)
+	_, err = state.Exec(id)
 	if err != nil {
 		return err
 	}

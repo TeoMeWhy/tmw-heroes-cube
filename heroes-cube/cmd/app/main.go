@@ -1,7 +1,6 @@
 package main
 
 import (
-	"heroes-cube/internals/db"
 	"heroes-cube/pkg/game"
 	"log"
 
@@ -10,29 +9,17 @@ import (
 
 func main() {
 
-	// p, _ := game.NewPerson("1234", "Téo Calvo", "Mage", "Human")
-	// log.Println(p)
-
-	// err := p.Create()
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-
-	// log.Println("Usuário criado com sucesso!")
-
-	con, _ := db.Connect()
-	dbp, err := db.GetPerson("1234", con)
+	teo, err := game.NewPerson("1", "Téo Calvo", "mage", "human")
 	if err != nil {
-		log.Println(err)
-	}
-	p := game.DBPersonToPerson(dbp)
-
-	p.Skills["Strength"] += 100
-
-	if err := p.Save(); err != nil {
-		log.Panicln("Erro ao salvar")
+		log.Panic(err)
 	}
 
-	log.Println("Sucesso ao salvar")
+	teo.Slots["head"] = game.Items["3"]
+	teo.Slots["hands"] = game.Items["1"]
 
+	if err := teo.Save(); err != nil {
+		log.Panic(err)
+	}
+
+	log.Println(teo)
 }
