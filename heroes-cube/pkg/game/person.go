@@ -36,7 +36,6 @@ func (p *Person) initSkills() {
 	p.Skills["agility"] = skills["agility"]
 	p.Skills["inteligence"] = skills["inteligence"]
 	p.Skills["strength"] = skills["strength"]
-
 }
 
 func (p *Person) initHitPoints() {
@@ -44,9 +43,9 @@ func (p *Person) initHitPoints() {
 }
 
 func (p *Person) initDamage() {
-	p.Damage = p.Skills[p.PrimaryStatus]
-	if p.Slots["arms"].Type == "weapon" {
-		p.Damage += p.Slots["arms"].Damage
+	p.Damage = p.Skills[p.PrimaryStatus] + p.Level
+	for _, v := range p.Slots {
+		p.Damage += v.Damage
 	}
 }
 
@@ -87,18 +86,16 @@ func (p *Person) ToPersonDB() *db.Person {
 		Exp:         p.Exp,
 		Level:       p.Level,
 	}
-
 	return personDB
-
 }
 
-func (p *Person) Save() error {
+func (p *Person) UpdateOrCreate() error {
 
-	if err := p.Inventory.Save(p.Id); err != nil {
+	if err := p.Inventory.UpdateOrCreate(p.Id); err != nil {
 		return err
 	}
 
-	if err := p.Slots.Save(p.Id); err != nil {
+	if err := p.Slots.UpdateOrCreate(p.Id); err != nil {
 		return err
 	}
 
@@ -116,6 +113,30 @@ func (p *Person) Save() error {
 
 func NewPerson(id, name, class, race string) (*Person, error) {
 
+	checkClass := false
+	for k := range Classes {
+		if class == k {
+			checkClass = true
+			break
+		}
+	}
+
+	if !checkClass {
+		return nil, utils.ClassNotFound
+	}
+
+	checkRace := false
+	for k := range Races {
+		if race == k {
+			checkRace = true
+			break
+		}
+	}
+
+	if !checkRace {
+		return nil, utils.RaceNotFound
+	}
+
 	p := &Person{
 		Id:        id,
 		Name:      name,
@@ -127,8 +148,8 @@ func NewPerson(id, name, class, race string) (*Person, error) {
 		Class:     Classes[class],
 		Slots:     Slots{},
 		Inventory: Inventory{},
-		Exp:       0,
-		Level:     0,
+		Exp:       1,
+		Level:     1,
 	}
 
 	p.initSkills()
@@ -179,4 +200,23 @@ func ImportPerson(idPerson string) (*Person, error) {
 
 	return p, nil
 
+}
+
+func GetOrCreatePerson(id, name, class, race string) (*Person, error) {
+
+	p, err := ImportPerson(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if p.Id != "" {
+		return p, nil
+	}
+
+	p, err = NewPerson(id, name, class, race)
+	if err != nil {
+		return nil, err
+	}
+
+	return p, nil
 }

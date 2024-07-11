@@ -1,6 +1,11 @@
 package game
 
-import "heroes-cube/internals/db"
+import (
+	"heroes-cube/internals/db"
+	"strconv"
+
+	"math/rand"
+)
 
 type Item struct {
 	Id          string
@@ -13,6 +18,8 @@ type Item struct {
 	HitPoints   int
 	Defense     int
 	Type        string
+	Price       int
+	Class       string
 }
 
 func ItemDBToItem(i db.Item) *Item {
@@ -27,6 +34,8 @@ func ItemDBToItem(i db.Item) *Item {
 		HitPoints:   i.HitPoints,
 		Defense:     i.Defense,
 		Type:        i.Type,
+		Price:       i.Price,
+		Class:       i.Class,
 	}
 
 	return item
@@ -59,4 +68,26 @@ func ImportItems() (map[string]Item, error) {
 	}
 
 	return items, nil
+}
+
+func SelectRandomItem(items map[string]Item) (*Item, error) {
+
+	var maxId int64
+
+	for i := range items {
+
+		iInt, err := strconv.Atoi(i)
+		if err != nil {
+			return nil, err
+		}
+
+		if maxId < int64(iInt) {
+			maxId = int64(iInt)
+		}
+	}
+
+	idSelected := rand.Int63n(maxId) + 1
+
+	item := items[strconv.Itoa(int(idSelected))]
+	return &item, nil
 }

@@ -53,17 +53,26 @@ func (inventory Inventory) ToinventoryDB(idPerson string) db.Inventory {
 	return inventoryDB
 }
 
-func (inventory Inventory) Save(idPerson string) error {
+func (inventory Inventory) UpdateOrCreate(idPerson string) error {
 
 	inventoryDB := inventory.ToinventoryDB(idPerson)
-
-	inventoryDBActual, err := db.GetInventory(idPerson, con)
-	if err != nil {
+	if err := db.DeleteInventory(idPerson, con); err != nil {
 		return err
 	}
 
-	if len(inventoryDBActual) == 0 {
-		return db.CreateInventory(inventoryDB, con)
+	if err := db.CreateInventory(inventoryDB, con); err != nil {
+		return err
 	}
-	return db.UpdateInventory(inventoryDB, con)
+
+	return nil
+
+	// inventoryDBActual, err := db.GetInventory(idPerson, con)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// if len(inventoryDBActual) == 0 {
+	// 	return db.CreateInventory(inventoryDB, con)
+	// }
+	// return db.UpdateInventory(inventoryDB, con)
 }

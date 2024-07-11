@@ -42,7 +42,7 @@ func (s *Slots) ToSlotsDB(idPerson string) db.Slots {
 	return slotsDB
 }
 
-func (s *Slots) Save(idPerson string) error {
+func (s *Slots) UpdateOrCreate(idPerson string) error {
 
 	slotsDB := s.ToSlotsDB(idPerson)
 

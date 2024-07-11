@@ -17,7 +17,7 @@ func main() {
 	teo.Slots["head"] = game.Items["3"]
 	teo.Slots["hands"] = game.Items["1"]
 
-	if err := teo.Save(); err != nil {
+	if err := teo.UpdateOrCreate(); err != nil {
 		log.Panic(err)
 	}
 

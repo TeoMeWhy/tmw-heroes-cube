@@ -13,6 +13,8 @@ type Item struct {
 	HitPoints   int
 	Defense     int
 	Type        string
+	Price       int
+	Class       string
 }
 
 func GetItem(idItem string, con *sql.DB) (*Item, error) {
@@ -28,7 +30,9 @@ func GetItem(idItem string, con *sql.DB) (*Item, error) {
 		Damage,
 		HitPoints,
 		Defense,
-		Type
+		Type,
+		Price,
+		Class
 	FROM items
 	WHERE Id = ?		
 	`
@@ -56,6 +60,8 @@ func GetItem(idItem string, con *sql.DB) (*Item, error) {
 			&item.HitPoints,
 			&item.Defense,
 			&item.Type,
+			&item.Price,
+			&item.Class,
 		)
 	}
 
@@ -75,7 +81,9 @@ func GetItemList(con *sql.DB) ([]Item, error) {
 		Damage,
 		HitPoints,
 		Defense,
-		Type
+		Type,
+		Price,
+		Class
 	
 	FROM items`
 
@@ -98,6 +106,8 @@ func GetItemList(con *sql.DB) ([]Item, error) {
 			&i.HitPoints,
 			&i.Defense,
 			&i.Type,
+			&i.Price,
+			&i.Class,
 		)
 		items = append(items, i)
 	}
