@@ -1,6 +1,9 @@
 package game
 
-import "heroes-cube/internals/db"
+import (
+	"heroes-cube/internals/db"
+	"heroes-cube/internals/utils"
+)
 
 type InventoryItem struct {
 	Item
@@ -65,14 +68,53 @@ func (inventory Inventory) UpdateOrCreate(idPerson string) error {
 	}
 
 	return nil
+}
 
-	// inventoryDBActual, err := db.GetInventory(idPerson, con)
-	// if err != nil {
-	// 	return err
-	// }
+func (inventory Inventory) AddItem(idItem string) Inventory {
 
-	// if len(inventoryDBActual) == 0 {
-	// 	return db.CreateInventory(inventoryDB, con)
-	// }
-	// return db.UpdateInventory(inventoryDB, con)
+	item := Items[idItem]
+	inventoryItem := InventoryItem{
+		Item:     item,
+		Quantity: 1,
+	}
+
+	inventory = append(inventory, inventoryItem)
+
+	return inventory
+}
+
+func (inventory Inventory) RemoveItem(idItem string) (Inventory, error) {
+
+	if check := inventory.HaveItem(idItem); !check {
+		return inventory, utils.ItemNotFoundInInventory
+	}
+
+	newInventory := Inventory{}
+
+	removed := false
+	for _, i := range inventory {
+
+		if i.Id == idItem && !removed {
+
+			if i.Quantity > 1 {
+				i.Quantity--
+				newInventory = append(newInventory, i)
+			}
+
+			removed = true
+			continue
+		}
+		newInventory = append(newInventory, i)
+	}
+
+	return newInventory, nil
+}
+
+func (inventory Inventory) HaveItem(idItem string) bool {
+	for _, i := range inventory {
+		if i.Id == idItem {
+			return true
+		}
+	}
+	return false
 }

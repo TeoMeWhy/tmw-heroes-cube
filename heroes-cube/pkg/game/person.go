@@ -38,34 +38,22 @@ func (p *Person) initSkills() {
 	p.Skills["strength"] = skills["strength"]
 }
 
-func (p *Person) initHitPoints() {
+func (p *Person) SetHitPoints() {
 	p.HitPoints = p.Skills["strength"] + 10
 }
 
-func (p *Person) initDamage() {
+func (p *Person) SetDamage() {
 	p.Damage = p.Skills[p.PrimaryStatus] + p.Level
 	for _, v := range p.Slots {
 		p.Damage += v.Damage
 	}
 }
 
-func (p *Person) initDefense() {
+func (p *Person) SetDefense() {
 	p.Defense = p.Skills["agility"]
 
-	if p.Slots["arms"].Type == "armor" {
-		p.Damage += p.Slots["arms"].Defense
-	}
-
-	if p.Slots["head"].Type == "armor" {
-		p.Damage += p.Slots["head"].Defense
-	}
-
-	if p.Slots["chest"].Type == "armor" {
-		p.Damage += p.Slots["chest"].Defense
-	}
-
-	if p.Slots["legs"].Type == "armor" {
-		p.Damage += p.Slots["legs"].Defense
+	for _, v := range p.Slots {
+		p.Defense += v.Defense
 	}
 }
 
@@ -90,6 +78,10 @@ func (p *Person) ToPersonDB() *db.Person {
 }
 
 func (p *Person) UpdateOrCreate() error {
+
+	p.SetDamage()
+	p.SetDefense()
+	p.SetHitPoints()
 
 	if err := p.Inventory.UpdateOrCreate(p.Id); err != nil {
 		return err
@@ -153,9 +145,9 @@ func NewPerson(id, name, class, race string) (*Person, error) {
 	}
 
 	p.initSkills()
-	p.initHitPoints()
-	p.initDamage()
-	p.initDefense()
+	p.SetHitPoints()
+	p.SetDamage()
+	p.SetDefense()
 
 	return p, nil
 }
@@ -202,21 +194,25 @@ func ImportPerson(idPerson string) (*Person, error) {
 
 }
 
-func GetOrCreatePerson(id, name, class, race string) (*Person, error) {
+func ImportPersonbyName(name string) (*Person, error) {
 
-	p, err := ImportPerson(id)
+	id, err := db.GetPersonIDbyName(name, con)
 	if err != nil {
 		return nil, err
 	}
 
-	if p.Id != "" {
-		return p, nil
+	return ImportPerson(id)
+}
+
+func (p *Person) EquipItem(idItem string) error {
+
+	item := Items[idItem]
+
+	if item.Class == "all" || item.Class == p.Class.Class {
+		p.Slots = p.Slots.AddItem(idItem)
+		return nil
 	}
 
-	p, err = NewPerson(id, name, class, race)
-	if err != nil {
-		return nil, err
-	}
+	return utils.ItemNotCompatible
 
-	return p, nil
 }

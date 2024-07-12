@@ -171,3 +171,30 @@ func DeletePerson(id string, con *sql.DB) error {
 
 	return nil
 }
+
+func GetPersonIDbyName(name string, con *sql.DB) (string, error) {
+
+	query := `
+	SELECT Id
+	FROM persons
+	WHERE Name = ?
+	`
+
+	state, err := con.Prepare(query)
+	if err != nil {
+		return "", err
+	}
+
+	rows, err := state.Query(name)
+	if err != nil {
+		return "", err
+	}
+
+	var idPerson string
+	for rows.Next() {
+		rows.Scan(&idPerson)
+	}
+
+	return idPerson, nil
+
+}

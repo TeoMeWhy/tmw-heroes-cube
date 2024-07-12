@@ -59,20 +59,41 @@ func GETpersons(c *gin.Context) {
 
 	idParam := c.Param("id")
 
-	person, err := game.ImportPerson(idParam)
+	body, err := importPersonById(idParam)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK, body)
+}
+
+func GETpersonsByName(c *gin.Context) {
+	name := c.Query("name")
+
+	body, err := importPersonByName(name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
+	c.JSON(http.StatusOK, body)
+
+}
+
+func importPersonByName(name string) (*PersonBody, error) {
+
+	person, err := game.ImportPersonbyName(name)
+	if err != nil {
+		return nil, err
+	}
+
 	if person.Id == "" {
-		c.JSON(http.StatusNotFound, gin.H{"error": "personagem não encontrado"})
-		return
+		return nil, utils.PersonNotFound
 	}
 
 	pDB := person.ToPersonDB()
 
-	bodyPerson := PersonBody{
+	bodyPerson := &PersonBody{
 		ID:          pDB.Id,
 		Name:        pDB.Name,
 		Race:        pDB.Race,
@@ -87,5 +108,37 @@ func GETpersons(c *gin.Context) {
 		Level:       pDB.Level,
 	}
 
-	c.JSON(http.StatusOK, bodyPerson)
+	return bodyPerson, nil
+}
+
+func importPersonById(id string) (*PersonBody, error) {
+
+	person, err := game.ImportPerson(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if person.Id == "" {
+		return nil, utils.PersonNotFound
+	}
+
+	pDB := person.ToPersonDB()
+
+	bodyPerson := &PersonBody{
+		ID:          pDB.Id,
+		Name:        pDB.Name,
+		Race:        pDB.Race,
+		Class:       pDB.Class,
+		Strength:    pDB.Strength,
+		Agility:     pDB.Agility,
+		Inteligence: pDB.Inteligence,
+		Damage:      pDB.Damage,
+		HitPoints:   pDB.HitPoints,
+		Defense:     pDB.Defense,
+		Exp:         pDB.Exp,
+		Level:       pDB.Level,
+	}
+
+	return bodyPerson, nil
+
 }

@@ -59,3 +59,14 @@ func (s *Slots) UpdateOrCreate(idPerson string) error {
 	log.Println("Slots existe, atualizando...")
 	return db.UpdateSlots(&slotsDB, idPerson, con)
 }
+
+func (s Slots) AddItem(idItem string) Slots {
+	item := Items[idItem]
+	s[item.Type] = item
+	return s
+}
+
+func (s Slots) RemoveItem(idItem string) Slots {
+	delete(s, idItem)
+	return s
+}

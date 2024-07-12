@@ -12,6 +12,21 @@ func GETitems(c *gin.Context) {
 	c.JSON(http.StatusOK, game.Items)
 }
 
+func GETitem(c *gin.Context) {
+
+	id := c.Param("id")
+
+	for _, i := range game.Items {
+		if i.Id == id {
+			c.JSON(http.StatusOK, i)
+			return
+		}
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{"error": "item nao encontrado"})
+
+}
+
 func GETrandomItem(c *gin.Context) {
 
 	item, err := game.SelectRandomItem(game.Items)
