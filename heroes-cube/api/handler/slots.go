@@ -17,10 +17,6 @@ func GETSlots(c *gin.Context) {
 		return
 	}
 
-	if len(slots) == 0 {
-		c.JSON(http.StatusOK, gin.H{"status": "inventário vazio ou não encontrado"})
-		return
-	}
 	c.JSON(http.StatusOK, slots)
 }
 
@@ -52,41 +48,58 @@ func PUTSlots(c *gin.Context) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+		return
 
 	} else if body.Op == "remove" {
+
+		err := removeSlots(body.IdPlayer, body.IdItem)
+		if err == utils.ItemNotFoundInSlot {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err})
+			return
+
+		} else if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "sua classe não pode equipar esse item"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 		return
 	}
+
+	c.JSON(http.StatusBadRequest, gin.H{"error": "Operação inválida, utilize 'add' ou 'remove'"})
 
 }
 
 func addSlots(idPlayer, idItem string) error {
-
-	newItem := game.Items[idItem]
 
 	person, err := game.ImportPerson(idPlayer)
 	if err != nil {
 		return err
 	}
 
-	if check := person.Inventory.HaveItem(idItem); !check {
-		return utils.ItemNotFoundInInventory
-	}
-
-	oldItem, ok := person.Slots[newItem.Type]
-	if ok {
-		person.Inventory = person.Inventory.AddItem(oldItem.Id)
-	}
-
 	err = person.EquipItem(idItem)
-	if err != nil {
-		return err
-	}
-	person.Inventory, err = person.Inventory.RemoveItem(idItem)
 	if err != nil {
 		return err
 	}
 
 	person.UpdateOrCreate()
 	return nil
+}
 
+func removeSlots(idPlayer, idItem string) error {
+
+	item := game.Items[idItem]
+
+	person, err := game.ImportPerson(idPlayer)
+	if err != nil {
+		return err
+	}
+
+	err = person.UnequipItem(item.Type)
+	if err != nil {
+		return err
+	}
+
+	person.UpdateOrCreate()
+	return nil
 }

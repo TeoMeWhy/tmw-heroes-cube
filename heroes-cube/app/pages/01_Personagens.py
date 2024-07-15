@@ -37,6 +37,27 @@ def format_inventory(inventory):
     inventory = inventory.sort_values(["Id"])
     return inventory
 
+def format_slots(slots):
+
+    slots = slots.T
+    
+    df_slots = pd.DataFrame(index=["foot", "head", "chest", "weapon"])
+
+    slots = pd.concat([df_slots,slots], axis=1)
+
+    slots = (slots[['Id', 'Name', 'Damage', 'Price', 'Class']]
+                  .rename(columns={
+                        'Name':'Nome',
+                        'Damage':'Dano',
+                        'Price':'Preço',
+                        'Class': 'Classe',
+                        })
+    )
+
+    slots.index = ["👢", "🎩", "👕" ,"⚔️"]
+
+    return slots
+
 
 st.markdown("# Personagens!")
 
@@ -58,27 +79,54 @@ if name != "":
         text = format_player(data)
         st.markdown(text)
 
-        resp_inventory = requests.get(f"http://localhost:8085/inventories/{id_person}")
-        inventory = pd.DataFrame(resp_inventory.json())
-        inventory = format_inventory(inventory=inventory)
+
+        st.markdown("""
+        ---
+        ## Equipamentos""")
+
+        slots_url = f"http://localhost:8085/slots/{id_person}"
+        resp_slots = requests.get(slots_url)
+        slots = resp_slots.json()
+        slots = pd.DataFrame(slots)
+        if slots.shape[0] != 0:
+            slots = format_slots(slots)
+        
+        st.dataframe(slots)
+
+        st.markdown("""
+Para equipar itens a partir do seu inventário, use: `!equipe id`
+Assim, para equipar suas botas que são id=1:
+        
+        !equip 1
+                            
+Para devolver um item equipado ao inventário, use `!unequip id`.
+Assim, para desequipar suas botas que são id=1:
+                    
+        !unequip 1
+                        
+        """)
+
 
         st.markdown("""
                     ---
                     ## Inventário""")
 
-        col1, col2 = st.columns(2)
+        resp_inventory = requests.get(f"http://localhost:8085/inventories/{id_person}")
+        inventory = pd.DataFrame(resp_inventory.json())
+        inventory = format_inventory(inventory=inventory)
+        
+        col1, col2 = st.columns([2,1])
 
         with col1:
             st.dataframe(inventory, hide_index=True)
             
             txt = """
-            Para vender seus itens do inventário, digite:
+Para vender seus itens do inventário, use: `!sell id`
+
+Ou seja, para vender seu item de `id=1`, use:
             
-            `!sell id`.
-
-            Ou seja, para vender seu item de `id=1`, utilize:
-
-            `!sell 1`            
+            !sell 1
+            
             """
             
             st.markdown(txt)

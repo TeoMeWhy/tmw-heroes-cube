@@ -70,9 +70,8 @@ func (inventory Inventory) UpdateOrCreate(idPerson string) error {
 	return nil
 }
 
-func (inventory Inventory) AddItem(idItem string) Inventory {
+func (inventory Inventory) AddItem(item Item) Inventory {
 
-	item := Items[idItem]
 	inventoryItem := InventoryItem{
 		Item:     item,
 		Quantity: 1,
@@ -83,9 +82,9 @@ func (inventory Inventory) AddItem(idItem string) Inventory {
 	return inventory
 }
 
-func (inventory Inventory) RemoveItem(idItem string) (Inventory, error) {
+func (inventory Inventory) RemoveItem(item Item) (Inventory, error) {
 
-	if check := inventory.HaveItem(idItem); !check {
+	if check := inventory.HaveItem(item); !check {
 		return inventory, utils.ItemNotFoundInInventory
 	}
 
@@ -94,7 +93,7 @@ func (inventory Inventory) RemoveItem(idItem string) (Inventory, error) {
 	removed := false
 	for _, i := range inventory {
 
-		if i.Id == idItem && !removed {
+		if i.Id == item.Id && !removed {
 
 			if i.Quantity > 1 {
 				i.Quantity--
@@ -110,9 +109,9 @@ func (inventory Inventory) RemoveItem(idItem string) (Inventory, error) {
 	return newInventory, nil
 }
 
-func (inventory Inventory) HaveItem(idItem string) bool {
+func (inventory Inventory) HaveItem(item Item) bool {
 	for _, i := range inventory {
-		if i.Id == idItem {
+		if i.Id == item.Id {
 			return true
 		}
 	}

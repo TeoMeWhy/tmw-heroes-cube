@@ -60,13 +60,12 @@ func (s *Slots) UpdateOrCreate(idPerson string) error {
 	return db.UpdateSlots(&slotsDB, idPerson, con)
 }
 
-func (s Slots) AddItem(idItem string) Slots {
-	item := Items[idItem]
+func (s Slots) AddItem(item Item) Slots {
 	s[item.Type] = item
 	return s
 }
 
-func (s Slots) RemoveItem(idItem string) Slots {
-	delete(s, idItem)
+func (s Slots) RemoveItem(item Item) Slots {
+	delete(s, item.Type)
 	return s
 }

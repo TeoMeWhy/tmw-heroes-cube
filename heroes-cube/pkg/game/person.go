@@ -206,13 +206,42 @@ func ImportPersonbyName(name string) (*Person, error) {
 
 func (p *Person) EquipItem(idItem string) error {
 
-	item := Items[idItem]
+	newItem := Items[idItem]
 
-	if item.Class == "all" || item.Class == p.Class.Class {
-		p.Slots = p.Slots.AddItem(idItem)
-		return nil
+	if check := p.Inventory.HaveItem(newItem); !check {
+		return utils.ItemNotFoundInInventory
 	}
 
-	return utils.ItemNotCompatible
+	if newItem.Class != "all" && newItem.Class != p.Class.Class {
+		return utils.ItemNotCompatible
+	}
+
+	oldItem, ok := p.Slots[newItem.Type]
+	if ok {
+		p.Inventory = p.Inventory.AddItem(oldItem)
+	}
+
+	p.Slots = p.Slots.AddItem(newItem)
+
+	var err error
+	p.Inventory, err = p.Inventory.RemoveItem(newItem)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (p *Person) UnequipItem(pos string) error {
+
+	item, ok := p.Slots[pos]
+	if !ok {
+		return utils.ItemNotFoundInSlot
+	}
+
+	p.Inventory = p.Inventory.AddItem(item)
+	p.Slots = p.Slots.RemoveItem(item)
+	return nil
 
 }

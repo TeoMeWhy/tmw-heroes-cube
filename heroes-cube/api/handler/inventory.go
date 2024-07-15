@@ -47,11 +47,11 @@ func PUTinventory(c *gin.Context) {
 
 	if body.Op == "add" {
 
-		inventory = inventory.AddItem(body.IdItem)
+		inventory = inventory.AddItem(game.Items[body.IdItem])
 
 	} else if body.Op == "remove" {
 
-		inventory, err = inventory.RemoveItem(body.IdItem)
+		inventory, err = inventory.RemoveItem(game.Items[body.IdItem])
 		if err == utils.ItemNotFoundInInventory {
 			c.JSON(http.StatusBadGateway, gin.H{"status": "item não encontrado no inventário"})
 			return
