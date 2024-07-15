@@ -68,7 +68,6 @@ if name != "":
 
         col1, col2 = st.columns(2)
 
-        # Exibir o primeiro dataframe na primeira coluna
         with col1:
             st.dataframe(inventory, hide_index=True)
             
@@ -84,9 +83,8 @@ if name != "":
             
             st.markdown(txt)
 
-        # Exibir o segundo dataframe na segunda coluna
         with col2:
-            url = "https://www.twitch.tv/embed/teomewhy/chat?parent=45e7-201-74-163-200.ngrok-free.app"
+            url = "https://www.twitch.tv/embed/teomewhy/chat?parent=emu-blessed-incredibly.ngrok-free.app"
             components.iframe(src=url,
                               height=400,
                               width=300)
