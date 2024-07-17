@@ -66,13 +66,13 @@ name = st.session_state.name.lower()
 
 if name != "":
     
-    resp = requests.get(f"http://localhost:8085/persons/?name={name}")
+    resp = requests.get(f"http://heroes:8085/persons/?name={name}")
 
     if resp.status_code == 200:
         data = resp.json()
         id_person = data["id"]
         
-        url_points = f"http://localhost:8080/customers?id={id_person}"
+        url_points = f"http://upsell:8080/customers?id={id_person}"
         resp_points = requests.get(url=url_points)
         data['points'] = resp_points.json()["Points"]
 
@@ -84,7 +84,7 @@ if name != "":
         ---
         ## Equipamentos""")
 
-        slots_url = f"http://localhost:8085/slots/{id_person}"
+        slots_url = f"http://heroes:8085/slots/{id_person}"
         resp_slots = requests.get(slots_url)
         slots = resp_slots.json()
         slots = pd.DataFrame(slots)
@@ -111,7 +111,7 @@ Assim, para desequipar suas botas que são id=1:
                     ---
                     ## Inventário""")
 
-        resp_inventory = requests.get(f"http://localhost:8085/inventories/{id_person}")
+        resp_inventory = requests.get(f"http://heroes:8085/inventories/{id_person}")
         inventory = pd.DataFrame(resp_inventory.json())
         inventory = format_inventory(inventory=inventory)
         

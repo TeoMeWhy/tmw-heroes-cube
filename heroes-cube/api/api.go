@@ -28,6 +28,6 @@ func main() {
 	r.GET("/slots/:id", handler.GETSlots)
 	r.PUT("/slots/", handler.PUTSlots)
 
-	r.Run("localhost:8085")
+	r.Run("0.0.0.0:8085")
 
 }

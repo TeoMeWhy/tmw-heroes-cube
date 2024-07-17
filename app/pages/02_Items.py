@@ -16,9 +16,7 @@ def format_items(df):
     return df
 
 def filter_df(df,  classe=None, posicao=None, nome=None):
-
     df = df.copy()
-
     if classe:
         df = df[df['Classe']==classe]
 
@@ -31,7 +29,7 @@ def filter_df(df,  classe=None, posicao=None, nome=None):
     return df
 
 
-url = "http://localhost:8085/items"
+url = "http://heroes:8085/items"
 
 resp = requests.get(url)
 items = pd.DataFrame(resp.json())
@@ -40,8 +38,6 @@ items = format_items(items)
 classes = items["Classe"].unique().tolist()
 posicoes = items["Posição"].unique().tolist()
 nomes = items["Nome"].unique().tolist()
-
-
 
 st.markdown("# Items")
 

@@ -1,0 +1,16 @@
+services:
+  api:
+    build:
+      context: heroes-cube
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    volumes:
+      - ./data:/app/data
+
+  streamlit:
+    build:
+      context: app
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
