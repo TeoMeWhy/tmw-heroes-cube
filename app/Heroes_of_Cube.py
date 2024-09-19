@@ -20,6 +20,6 @@ text = """
 
 st.markdown(text)
 
-components.iframe(src="https://www.twitch.tv/embed/teomewhy/chat?parent=emu-blessed-incredibly.ngrok-free.app",
+components.iframe(src="https://www.twitch.tv/embed/teomewhy/chat?parent=flying-goldfish-novel.ngrok-free.app",
                   height=500,
                   width=300)

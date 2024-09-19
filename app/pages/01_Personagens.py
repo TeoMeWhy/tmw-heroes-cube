@@ -132,7 +132,7 @@ Ou seja, para vender seu item de `id=1`, use:
             st.markdown(txt)
 
         with col2:
-            url = "https://www.twitch.tv/embed/teomewhy/chat?parent=emu-blessed-incredibly.ngrok-free.app"
+            url = "https://www.twitch.tv/embed/teomewhy/chat?parent=flying-goldfish-novel.ngrok-free.app"
             components.iframe(src=url,
                               height=400,
                               width=300)
